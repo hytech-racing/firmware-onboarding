@@ -67,10 +67,27 @@ jobs:
 
       - name: Build firmware
         working-directory: ${{ matrix.project_dir }}
-        # Explicitly target the "uno" env — if a trainee added an
-        # [env:native] section for the stretch goal, a bare `pio run`
-        # would try (and fail) to build it as firmware too.
-        run: pio run -e uno
+        # Don't assume a fixed environment name (e.g. "uno") — every
+        # trainee's platformio.ini can name their hardware envs however
+        # they want (uno_i2c/uno_spi, etc.), so this discovers whatever
+        # [env:*] sections actually exist and builds each one. "native"
+        # is skipped here on purpose: it's for `pio test`, not `pio
+        # run` — building it as firmware would fail since it has no
+        # main()/setup()/loop().
+        run: |
+          envs=$(grep -oE '^\[env:[^]]+\]' platformio.ini \
+            | sed -E 's/^\[env:(.+)\]$/\1/' \
+            | grep -v '^native$')
+
+          if [ -z "$envs" ]; then
+            echo "No non-native [env:*] sections found in platformio.ini"
+            exit 1
+          fi
+
+          for e in $envs; do
+            echo "Building environment: $e"
+            pio run -e "$e"
+          done
 
       - name: Run native tests (if present)
         working-directory: ${{ matrix.project_dir }}
@@ -80,3 +97,25 @@ jobs:
           else
             echo "No [env:native] found — skipping (native tests are a stretch goal, see TASK.md)"
           fi
+
+  # GitHub's required-status-checks feature needs one fixed check name
+  # to require — but build-and-test's name changes per matrix value
+  # (e.g. "Build + test submission (submissions/alice)"), since that's
+  # how matrix jobs report their status. A required check locked to
+  # one specific matrix value would only ever pass for that one
+  # person's submission path, permanently blocking everyone else's
+  # PRs. This job always has the same name no matter what the matrix
+  # contained, so THIS is the one to mark as required in the ruleset.
+  all-builds-passed:
+    name: All builds passed
+    needs: build-and-test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix result
+        run: |
+          if [ "${{ needs.build-and-test.result }}" != "success" ]; then
+            echo "One or more submission builds failed."
+            exit 1
+          fi
+          echo "All submission builds succeeded."
