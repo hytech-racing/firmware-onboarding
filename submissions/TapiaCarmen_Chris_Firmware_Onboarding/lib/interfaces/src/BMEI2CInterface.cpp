@@ -1,4 +1,4 @@
-#include "BMEI2Cinterface.h"
+#include "BMEI2CInterface.h"
 #include "BMEConstants.h"
 #include <Adafruit_BME280.h>
 
