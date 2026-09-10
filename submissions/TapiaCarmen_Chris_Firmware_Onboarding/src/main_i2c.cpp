@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "BMEI2Cinterface.h"
+#include "BMEI2CInterface.h"
 #include "LEDController.h"
 #include "BMEConstants.h"
 void setup() {
