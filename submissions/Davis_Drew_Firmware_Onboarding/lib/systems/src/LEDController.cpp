@@ -12,10 +12,12 @@ void LEDController::begin()
 
 void LEDController::update(float temperature)
 {
+    // Determine the correct blink interval from temperature.
     blinkInterval = calculateBlinkInterval(temperature);
 
     unsigned long currentTime = millis();
 
+    // Toggle the LED whenever the interval has elapsed.
     if (currentTime - previousToggleTime >= blinkInterval)
     {
         previousToggleTime = currentTime;
@@ -31,35 +33,40 @@ void LEDController::update(float temperature)
 
 unsigned long LEDController::calculateBlinkInterval(float temperature)
 {
-    // If temperature is below the minimum,
-    // keep the LED at the slowest rate.
+    // Cold or below minimum temperature:
+    // use the slowest blink rate.
     if (temperature <= BMEConstants::MIN_TEMP_C)
     {
         return BMEConstants::SLOW_BLINK_INTERVAL_MS;
     }
 
-    // If temperature is above the maximum,
-    // keep the LED at the fastest rate.
+    // Hot or above maximum temperature:
+    // use the fastest blink rate.
     if (temperature >= BMEConstants::MAX_TEMP_C)
     {
         return BMEConstants::FAST_BLINK_INTERVAL_MS;
     }
 
-    // Determine how far temperature is between
-    // MIN_TEMP_C and MAX_TEMP_C.
-    float fraction =
+    // Convert temperature to a value from 0.0 to 1.0.
+    //
+    // MIN_TEMP_C -> 0.0
+    // MAX_TEMP_C -> 1.0
+    float temperatureFraction =
         (temperature - BMEConstants::MIN_TEMP_C) /
         (BMEConstants::MAX_TEMP_C - BMEConstants::MIN_TEMP_C);
 
-    // Linearly decrease the blink interval as
-    // temperature increases.
-    float interval =
+    // IMPORTANT:
+    // As temperatureFraction gets BIGGER,
+    // blinkInterval gets SMALLER.
+    //
+    // Smaller interval = faster blinking.
+    float blinkIntervalFloat =
         BMEConstants::SLOW_BLINK_INTERVAL_MS -
-        fraction *
+        temperatureFraction *
         (
             BMEConstants::SLOW_BLINK_INTERVAL_MS -
             BMEConstants::FAST_BLINK_INTERVAL_MS
         );
 
-    return static_cast<unsigned long>(interval);
+    return static_cast<unsigned long>(blinkIntervalFloat);
 }
