@@ -1,28 +1,63 @@
 #include <Arduino.h>
 #include "BMESPIInterface.h"
 #include "LEDController.h"
+#include "BMEConstants.h"
 
-void setup() {
+void setup()
+{
     Serial.begin(115200);
-    while (!Serial) { delay(10); }
 
-    auto& spiInterface = BMESPIInterfaceInstance::instance();
-    if (!spiInterface.begin()) {
-        Serial.println(F("BME280 SPI initialization failed!"));
-        while (1) { delay(100); }
+    // Create singleton instances.
+    BMESPIInterfaceInstance::create();
+    LEDControllerInstance::create();
+
+    BMESPIInterface& bme =
+        BMESPIInterfaceInstance::instance();
+
+    LEDController& led =
+        LEDControllerInstance::instance();
+
+    led.begin();
+
+    Serial.println("Starting BME280 in SPI mode...");
+
+    if (!bme.begin())
+    {
+        Serial.println("ERROR: BME280 not found!");
+
+        while (true)
+        {
+            // Stop here because the sensor did not initialize.
+        }
     }
-    Serial.println(F("BME280 SPI initialized."));
+
+    Serial.println("BME280 initialized successfully.");
 }
 
-void loop() {
-    auto& spiInterface = BMESPIInterfaceInstance::instance();
-    auto& ledController = LEDControllerInstance::instance();
+void loop()
+{
+    BMESPIInterface& bme =
+        BMESPIInterfaceInstance::instance();
 
-    float temp = spiInterface.readTemperature();
-    Serial.print(F("Temp (SPI): "));
-    Serial.print(temp);
-    Serial.println(F(" °C"));
+    LEDController& led =
+        LEDControllerInstance::instance();
 
-    ledController.update(temp);
-    delay(100);
+    static unsigned long previousReadTime = 0;
+    static float temperature = 0.0;
+
+    unsigned long currentTime = millis();
+
+    if (currentTime - previousReadTime >=
+        BMEConstants::SENSOR_READ_INTERVAL_MS)
+    {
+        previousReadTime = currentTime;
+
+        temperature = bme.readTemperature();
+
+        Serial.print("Temperature: ");
+        Serial.print(temperature);
+        Serial.println(" C");
+    }
+
+    led.update(temperature);
 }

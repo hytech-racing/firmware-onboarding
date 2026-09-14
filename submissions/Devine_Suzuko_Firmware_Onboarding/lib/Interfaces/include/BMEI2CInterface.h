@@ -7,7 +7,9 @@ class BMEI2CInterface
 {
 public:
     BMEI2CInterface() = default;
-    bool begin(uint8_t addr = BME280_ADDRESS);
+
+    bool begin();
+
     float readTemperature();
 
 private:

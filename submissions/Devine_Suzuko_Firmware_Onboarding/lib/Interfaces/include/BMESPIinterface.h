@@ -6,13 +6,14 @@
 class BMESPIInterface
 {
 public:
-    BMESPIInterface(int8_t cspin = 10);
+    BMESPIInterface() = default;
+
     bool begin();
+
     float readTemperature();
 
 private:
-    int8_t _cspin;
-    Adafruit_BME280 bme;
+    Adafruit_BME280 bme{BMEConstants::SPI_CS_PIN};
 };
 
 using BMESPIInterfaceInstance = etl::singleton<BMESPIInterface>;
