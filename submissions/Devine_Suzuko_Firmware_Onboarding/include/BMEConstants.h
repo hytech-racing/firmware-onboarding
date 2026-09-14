@@ -21,7 +21,7 @@ namespace BMEConstants
     constexpr float MAX_TEMP_C = 30.0;
 
     // At low temperatures: blink slowly
-    constexpr unsigned long SLOW_BLINK_INTERVAL_MS = 1000;
+    constexpr unsigned long SLOW_BLINK_INTERVAL_MS = 1200;
 
     // At high temperatures: blink quickly
     constexpr unsigned long FAST_BLINK_INTERVAL_MS = 100;
