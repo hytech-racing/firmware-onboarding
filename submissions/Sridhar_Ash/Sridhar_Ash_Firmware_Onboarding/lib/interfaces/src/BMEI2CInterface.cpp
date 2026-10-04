@@ -2,7 +2,7 @@
 
 bool BMEI2CInterface::init()
 {
-    return bme.begin();
+    return bme.begin(0x76);
 }
 
 float BMEI2CInterface::get_temperature()

@@ -8,6 +8,9 @@ void setup()
 {
     Serial.begin(115200);
 
+    BMEI2CInterfaceInstance::create();
+    LEDControllerInstance::create();
+    
     LEDControllerInstance::instance().init();
 
     bool success = BMEI2CInterfaceInstance::instance().init();

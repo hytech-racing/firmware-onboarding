@@ -8,9 +8,9 @@ namespace BMEConstants
 
     constexpr uint8_t LED_PIN = LED_BUILTIN;
 
-    constexpr float MIN_TEMP = 20.0;
-    constexpr float MAX_TEMP = 30.0;
+    constexpr float MIN_TEMP = 23.0;
+    constexpr float MAX_TEMP = 28.0;
 
     constexpr unsigned long SLOW_BLINK_MS = 1000;
-    constexpr unsigned long FAST_BLINK_MS = 200;
+    constexpr unsigned long FAST_BLINK_MS = 100;
 }
