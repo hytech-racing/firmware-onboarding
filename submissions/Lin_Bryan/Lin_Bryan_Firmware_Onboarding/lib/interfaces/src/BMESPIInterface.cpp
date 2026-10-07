@@ -1,4 +1,5 @@
 #include "BMESPIInterface.h"
+#include "BMEConstants.h"
 
 BMESPIInterface::BMESPIInterface() : bme(BMEConstants::SPI_CS_PIN)
 {

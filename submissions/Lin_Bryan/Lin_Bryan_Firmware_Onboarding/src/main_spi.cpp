@@ -28,7 +28,7 @@ void loop()
 
     LEDControllerInstance::instance().update(currentTemp);
 
-    if (millis() - lastPrintTime >= 1000) {
+    if (millis() - lastPrintTime >= 100) {
         lastPrintTime = millis();
         Serial.print("SPI Temp: ");
         Serial.print(currentTemp);
