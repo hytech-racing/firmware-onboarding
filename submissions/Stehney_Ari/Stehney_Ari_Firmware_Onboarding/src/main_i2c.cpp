@@ -24,7 +24,7 @@ void setup() {
     LEDControllerInstance::create();
     led = &LEDControllerInstance::instance();
 
-    if (!led->begin()) {
+    if (led->begin()) {
         Serial.println("can't init LED Controller");
         while (1);
     }
@@ -34,6 +34,8 @@ void loop() {
   if (millis() - last_time >= BMEConstants::SENSOR_UPDATE_IVAL) {
     last_time = millis();
     last_sensor_value = bme->getTemp();
+    Serial.print("temp: ");
+    Serial.println(last_sensor_value);
   }
 
   led->update(last_sensor_value);

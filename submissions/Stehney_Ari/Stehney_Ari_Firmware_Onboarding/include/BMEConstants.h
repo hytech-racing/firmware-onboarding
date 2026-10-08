@@ -17,7 +17,7 @@ namespace BMEConstants
     constexpr unsigned long LOW_IVAL = 1000;
 
     constexpr float TEMP_HIGH = 30.0F;
-    constexpr unsigned long HIGH_IVAL = 500;
+    constexpr unsigned long HIGH_IVAL = 250;
 
     /* random stuff for main */
     constexpr unsigned long SENSOR_UPDATE_IVAL = 500;
