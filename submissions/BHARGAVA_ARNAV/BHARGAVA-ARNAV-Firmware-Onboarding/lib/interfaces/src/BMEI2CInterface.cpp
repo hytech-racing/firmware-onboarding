@@ -5,7 +5,7 @@
 
 
 bool BMEI2CInterface::init () {       
-    return new_sensor.begin();
+    return new_sensor.begin(BMEConstants::i2c_address);
 }; 
 
 float BMEI2CInterface::getTemperature() {
