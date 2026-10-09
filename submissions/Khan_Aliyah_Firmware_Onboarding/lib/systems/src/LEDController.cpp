@@ -1,6 +1,6 @@
 #include "LEDController.h"
 
-// Store the pin used to control the LED
+// Store the pin used for the LED
 LEDController::LEDController(uint8_t pin)
     : ledPin(pin)
 {
@@ -14,21 +14,13 @@ void LEDController::begin()
 
 void LEDController::update(float temperature)
 {
-    unsigned long interval;
-    // Higher temperatures use shorter blink intervals
-    if (temperature < 20.0f)
-    {
-        interval = 1000;
-    }
-    else if (temperature < 30.0f)
-    {
-        interval = 500;
-    }
-    else
-    {
-        interval = 200;
-    }
-    // Change the LED state once enough time has passed
+    // Higher temperatures have shorter blink intervals
+    long interval = 1500 - (long)(temperature * 40);
+
+    // Limit the minimum and maximum blink interval
+    interval = constrain(interval, 100L, 1200L);
+
+    // Toggle the LED when enough time has passed
     if (millis() - lastToggle >= (unsigned long)interval)
     {
         lastToggle = millis();
